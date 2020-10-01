@@ -1,3 +1,4 @@
+// collissions: open addressing (linear probing)
 class HashMap {
   constructor(initialCapacity = 8) {
     this.length = 0;
@@ -8,6 +9,7 @@ class HashMap {
 
   get(key) {
     const index = this._findSlot(key);
+    // private helper function _findSlot() is used to find the correct slot for a given key
     if (this._hashTable[index] === undefined) {
       throw new Error("Key error");
     }
@@ -16,11 +18,14 @@ class HashMap {
 
   set(key, value) {
     const loadRatio = (this.length + this._deleted + 1) / this._capacity;
+    // initially checks whether the load ratio is greater than the given maximum.
+    // If so it resizes the hash map using the private _resize() function,
     if (loadRatio > this.MAX_LOAD_RATIO) {
       this._resize(this._capacity * this.SIZE_RATIO);
     }
-    //Find the slot where this key should be in
+
     const index = this._findSlot(key);
+    //Find the slot where this key should be in
 
     if (!this._hashTable[index]) {
       this.length++;
@@ -46,6 +51,9 @@ class HashMap {
   _findSlot(key) {
     const hash = HashMap._hashString(key);
     const start = hash % this._capacity;
+    // uses the private _hashString() function to
+    // calculate the hash of the key, and then uses the
+    // modulus to find a slot for the key within the current capacity
 
     for (let i = start; i < start + this._capacity; i++) {
       const index = i % this._capacity;
@@ -53,10 +61,13 @@ class HashMap {
       if (slot === undefined || (slot.key === key && !slot.DELETED)) {
         return index;
       }
+      // It then loops through the array, stopping when it finds the slot with a matching key or an empty slot
     }
   }
 
   _resize(size) {
+    // To make sure that each item lives in the correct location
+    // you really just recreate the hash map from scratch with larger capacity
     const oldSlots = this._hashTable;
     this._capacity = size;
     // Reset the length - it will get rebuilt as you add the items back
@@ -66,6 +77,7 @@ class HashMap {
 
     for (const slot of oldSlots) {
       if (slot !== undefined && !slot.DELETED) {
+        // on resize you can actually clear out all of the deleted items
         this.set(slot.key, slot.value);
       }
     }
