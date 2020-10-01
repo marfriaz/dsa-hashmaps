@@ -1,4 +1,4 @@
-// collissions: open addressing (linear probing)
+// collissions: open addressing (linear probing) when you have a collision, you hash the key to the empty slot nearest to where it should live.
 class HashMap {
   constructor(initialCapacity = 8) {
     this.length = 0;
